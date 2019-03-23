@@ -55,7 +55,6 @@ class Order_Products(BaseModel):
     order = ForeignKeyField(Orders, backref='Order')
     product = ForeignKeyField(Products, backref='Order')
 
-
 @app.route('/')
 def hello_world():
     user = Users.get_or_none(Users.name == 'Ioana')
@@ -64,7 +63,7 @@ def hello_world():
 
 @app.route('/product', methods=['GET'])
 def get_menu():
-    id_table = 1  # request.form['id_restaurant']
+    id_table = request.form['id_restaurant']
     query = Tables.update(isOcupied=True).where(Tables.id == id_table)
     query.execute()
 
@@ -77,8 +76,7 @@ def get_menu():
     menu = {}
     for category in categories:
         auxList = []
-        for product in Products.select().where(
-                Products.restaurant == id_restaurant and Products.category == category):
+        for product in Products.select().where(Products.restaurant == id_restaurant, Products.category == category):
             dict = {}
             dict['id'] = product.id
             dict['name'] = product.name
@@ -87,7 +85,10 @@ def get_menu():
 
         menu[category] = auxList
 
-    return 'bjhcdsa'
+    return jsonify({
+        'status': 'success',
+        'data': menu
+    })
 
 @app.route('/buy', methods=['POST'])
 def buy():
@@ -114,12 +115,21 @@ def buy():
 
 @app.route('/bill', methods=['GET'])
 def get_bill():
-    email = 'cosminzorr@gmail.com'  # request.form['email']
+    email = request.form['email']
     products = []
-
     user = Users.get_or_none(Users.email == email)
 
-    return user.name
+    order = Orders.get_or_none(Orders.user == user.id and Orders.status == 2)
+
+    for order_product in Order_Products.select().where(Order_Products.order == order.id):
+        produs = Products.get_or_none(Products.id == order_product.product)
+        val = {'name': produs.name, 'price': produs.price}
+        products.append(val)
+
+    return jsonify({
+        'status': 'success',
+        'data': products
+    })
 
 @app.route('/orders', methods=['GET'])
 def get_orders():
