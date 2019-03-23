@@ -85,7 +85,7 @@ def get_rating(id_product):
 
 @app.route('/product', methods=['GET'])
 def get_menu():
-    id_table = 1#request.args['id_table']
+    id_table = request.args['id_table']
     if 'category' in request.args:
         base_category = request.args['category']
     else:
