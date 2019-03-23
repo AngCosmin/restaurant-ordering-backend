@@ -88,7 +88,7 @@ def get_rating(id_product):
 
 @app.route('/product', methods=['GET'])
 def get_menu():
-    id_table = request.args['id_table']
+    id_table = 1#request.args['id_table']
     if 'category' in request.args:
         base_category = request.args['category']
     else:
@@ -241,24 +241,6 @@ def add_rating():
         'status': 'success',
         'message': 'You have successfully placed your review!'
     })
-
-
-@app.route('/get_rating', methods=['GET'])
-def get_rating():
-    id_product = request.args['product_id']
-    sum = 0
-    nr = 0
-    for review in Reviews.select().where(Reviews.product == id_product):
-        sum += review.value
-        nr += 1
-
-    value = sum / nr
-
-    return jsonify({
-        'status': 'success',
-        'data': value
-    })
-
 
 
 @app.route('/restaurant/login', methods=['POST'])
