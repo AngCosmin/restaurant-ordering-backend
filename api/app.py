@@ -45,6 +45,11 @@ class Products(BaseModel):
     category = CharField()
 
 
+class Reviews(BaseModel):
+    product = ForeignKeyField(Products, backref='Table')
+    value = FloatField()
+
+
 class Orders(BaseModel):
     table = ForeignKeyField(Tables, backref='Order')
     user = ForeignKeyField(Users, backref='Order')
@@ -140,10 +145,35 @@ def get_bill():
     })
 
 
+@app.route('/categories', methods=['GET'])
+def get_categories():
+    if 'id_table' in request.args:
+        id_table = request.args['id_table']
+        id_restaurant = Tables.get(Tables.id == id_table).restaurant
+    else:
+        id_restaurant = None
+
+    if id_restaurant is not None:
+        categories = []
+        for product in Products.select().where(Products.restaurant == id_restaurant):
+            categories.append(product.category)
+        categories = list(set(categories))
+    else:
+        categories = []
+        for restaurant in Restaurants.select():
+            for product in Products.select().where(Products.restaurant == restaurant.id):
+                categories.append(product.category)
+        categories = list(set(categories))
+
+    return jsonify({
+        'status': 'success',
+        'data': categories
+    })
+
+
 @app.route('/orders', methods=['GET'])
 def get_orders():
-    # restaurat_id = request.args['restaurat_id']
-    restaurat_id = 1
+    restaurat_id = request.args['restaurat_id']
 
     ord = []
     for tables in Tables.select().where(Tables.restaurant == restaurat_id):
@@ -162,6 +192,50 @@ def get_orders():
         'data': ord
     })
 
+@app.route('/add_product', methods=['POST'])
+def add_product():
+    id_restaurant = request.form['restaurant_id']
+    name = request.form['name']
+    price = request.form['price']
+    ingredients = request.form['ingredients']
+    category = request.form['category']
+
+    Products.create(restaurant=id_restaurant, name=name, price=price, ingredients=ingredients, category=category)
+
+
+    return jsonify({
+        'status': 'success',
+        'message': 'You have successfully placed your product!'
+    })
+
+@app.route('/add_rating', methods=['POST'])
+def add_rating():
+    id_product = request.form['product_id']
+    rating = request.form['rating']
+
+    Reviews.create(product=id_product, value=rating)
+
+    return jsonify({
+        'status': 'success',
+        'message': 'You have successfully placed your review!'
+    })
+
+
+@app.route('/get_rating', methods=['GET'])
+def get_rating():
+    id_product = request.args['product_id']
+    sum = 0
+    nr = 0
+    for review in Reviews.select().where(Reviews.product == id_product):
+        sum += review.value
+        nr += 1
+
+    value = sum / nr
+
+    return jsonify({
+        'status': 'success',
+        'data': value
+    })
 
 
 if __name__ == '__main__':
