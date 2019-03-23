@@ -255,7 +255,7 @@ def restaurant_login():
 
 @app.route('/restaurant/products', methods=['GET'])
 def restaurant_products():
-    id_restaurant = 1#request.form['restaurant_id']
+    id_restaurant = request.form['restaurant_id']
 
     restaurant = Restaurants.get(Restaurants.id == id_restaurant)
     products = []
