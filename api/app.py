@@ -168,8 +168,7 @@ def get_categories():
 
 @app.route('/orders', methods=['GET'])
 def get_orders():
-    # restaurat_id = request.args['restaurat_id']
-    restaurat_id = 1
+    restaurat_id = request.args['restaurat_id']
 
     ord = []
     for tables in Tables.select().where(Tables.restaurant == restaurat_id):
@@ -188,6 +187,21 @@ def get_orders():
         'data': ord
     })
 
+@app.route('/add_product', methods=['POST'])
+def add_product():
+    id_restaurant = request.form['restaurant_id']
+    name = request.form['name']
+    price = request.form['price']
+    ingredients = request.form['ingredients']
+    category = request.form['category']
+
+    Products.create(restaurant=id_restaurant, name=name, price=price, ingredients=ingredients, category=category)
+
+
+    return jsonify({
+        'status': 'success',
+        'message': 'You have successfully placed your product!'
+    })
 
 
 if __name__ == '__main__':
