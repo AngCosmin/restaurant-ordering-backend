@@ -46,8 +46,8 @@ class Products(BaseModel):
 
 
 class Orders(BaseModel):
-    id_table = ForeignKeyField(Tables, backref='Order')
-    id_user = ForeignKeyField(Users, backref='Order')
+    id_table = IntegerField()
+    id_user = IntegerField()
     status = IntegerField()
 
 
@@ -70,7 +70,27 @@ def get_menue():
         print(product.category)
     return 'bjhcdsa'
 
+@app.route('/buy', methods=['POST'])
+def buy():
+    products = request.form['products']
+    email = request.form['email']
+    id_table = request.form['id_table']
 
+    # products = '1, 3'
+    # email = "ioanamoraru14@gmail.com"
+    # id_table = "1"
+
+    user = Users.get(Users.email == email)
+    order = Orders.create(id_table=id_table, id_user=user.id, status=1)
+    products = products.split(',')
+
+    for product in products:
+        Order_Products.create(id_product=product, id_order=order.id)
+
+    return jsonify({
+        'status': 'success',
+        'message': 'You have successfully placed your order!'
+    })
 
 
 
