@@ -243,7 +243,6 @@ def add_rating():
     })
 
 
-<<<<<<< HEAD
 @app.route('/get_rating', methods=['GET'])
 def get_rating():
     id_product = request.args['product_id']
