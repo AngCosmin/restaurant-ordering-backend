@@ -55,6 +55,7 @@ class Order_Products(BaseModel):
     order = ForeignKeyField(Orders, backref='Order')
     product = ForeignKeyField(Products, backref='Order')
 
+
 @app.route('/')
 def hello_world():
     user = Users.get_or_none(Users.name == 'Ioana')
@@ -63,7 +64,8 @@ def hello_world():
 
 @app.route('/product', methods=['GET'])
 def get_menu():
-    id_table = request.form['id_restaurant']
+    id_table = int(request.args['id_table'])
+    print(id_table)
     query = Tables.update(isOcupied=True).where(Tables.id == id_table)
     query.execute()
 
@@ -89,6 +91,7 @@ def get_menu():
         'status': 'success',
         'data': menu
     })
+
 
 @app.route('/buy', methods=['POST'])
 def buy():
@@ -131,15 +134,29 @@ def get_bill():
         'data': products
     })
 
+
 @app.route('/orders', methods=['GET'])
 def get_orders():
-    #restaurat_id = request.form['restaurat_id']
+    # restaurat_id = request.args['restaurat_id']
     restaurat_id = 1
 
-    orders = []
-    for order in Tables.select(Tables.id).where(Tables.restaurant==restaurat_id):
-        print(order.identify)
-    return ""
+    ord = []
+    for tables in Tables.select().where(Tables.restaurant == restaurat_id):
+        prod = []
+        for orders in Orders.select().where(Orders.table==tables.id, Orders.status == 1):
+
+            for product_ids in Order_Products.select().where(Order_Products.order==orders.id):
+
+                for products in Products.select().where(Products.id==product_ids.product):
+                    prod.append(products.name)
+        if prod != []:
+            ord.append({'table_id': tables.id, 'products': prod})
+
+    return jsonify({
+        'status': 'success',
+        'data': ord
+    })
+
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0")
+    app.run()
