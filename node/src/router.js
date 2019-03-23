@@ -20,6 +20,18 @@ let routes = [
         meta: { requiresAuth: false },
         name: 'login',
     },
+    {
+        path: '/products',
+        component: loadView('Products'),
+        meta: { requiresAuth: true },
+        name: 'products',
+    },
+    {
+        path: '/dashboard',
+        component: loadView('Dashboard'),
+        meta: { requiresAuth: true },
+        name: 'dashboard',
+    },
 ]
 
 const router = new Router({
