@@ -262,9 +262,9 @@ def restaurant_login():
 
 @app.route('/restaurant/products', methods=['GET'])
 def restaurant_products():
-    id_restaurant = request.form['restaurant_id']
+    email = request.form['email']
 
-    restaurant = Restaurants.get(Restaurants.id == id_restaurant)
+    restaurant = Restaurants.get(Restaurants.email == email)
     products = []
     for product in Products.select().where(Products.restaurant == restaurant.id):
         dict = {}
