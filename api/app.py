@@ -80,7 +80,7 @@ def get_rating(id_product):
         nr += 1
 
     if nr == 0:
-        return ''
+        return '-'
 
     value = sum / nr
     return value
@@ -88,7 +88,7 @@ def get_rating(id_product):
 
 @app.route('/product', methods=['GET'])
 def get_menu():
-    id_table = 1#request.args['id_table']
+    id_table = request.args['id_table']
     if 'category' in request.args:
         base_category = request.args['category']
     else:
@@ -116,7 +116,10 @@ def get_menu():
             dict['picture'] = product.picture
             dict['category'] = category
             rating = get_rating(product.id)
-            dict['rating'] = rating
+            if rating == '-':
+                dict['rating'] = '-'
+            else:
+                dict['rating'] = rating
             menu.append(dict)
 
     return jsonify({
