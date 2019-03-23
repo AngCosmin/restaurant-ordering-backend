@@ -22,7 +22,7 @@ class BaseModel(Model):
 
 class Users(BaseModel):
     email = CharField()
-    username = CharField()
+    name = CharField()
 
 
 class Restaurants(BaseModel):
@@ -30,14 +30,14 @@ class Restaurants(BaseModel):
 
 
 class Tables(BaseModel):
-    id_restaurant = ForeignKeyField(Restaurants, backref='table')
+    id_restaurant = ForeignKeyField(Restaurants, backref='Table')
     isOcupied = BooleanField()
     status = IntegerField()
     identify = IntegerField()
 
 
 class Products(BaseModel):
-    id_restaurant = ForeignKeyField(Restaurants, backref='product')
+    id_restaurant = IntegerField()
     name = CharField()
     price = FloatField()
     ingredients = CharField()
@@ -46,8 +46,8 @@ class Products(BaseModel):
 
 
 class Orders(BaseModel):
-    id_table = ForeignKeyField(Tables, backref='Command')
-    id_user = ForeignKeyField(Users, backref='Command')
+    id_table = ForeignKeyField(Tables, backref='Order')
+    id_user = ForeignKeyField(Users, backref='Order')
     status = IntegerField()
 
 
@@ -59,12 +59,16 @@ class Order_Products(BaseModel):
 
 @app.route('/')
 def hello_world():
-    user = Users.get_or_none(Users.username == 'Ioana')
-    return user.password
+    user = Users.get_or_none(Users.name == 'Ioana')
+    return user.email
 
 
-
-
+@app.route('/product', methods=['GET'])
+def get_menue():
+    # id_restaurant = request.form['id_restaurant']
+    for product in Products.select().where(Products.id_restaurant == 1):
+        print(product.category)
+    return 'bjhcdsa'
 
 
 
