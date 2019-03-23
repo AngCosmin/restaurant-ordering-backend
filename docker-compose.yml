@@ -20,6 +20,17 @@ services:
     volumes:
       - ./db:/docker-entrypoint-initdb.d/:ro
 
+  node:
+    build: ./node
+    volumes:
+      - ./node:/node
+    ports:
+      - "4000:4000"
+    environment:
+      - PORT=4000
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     ports:
