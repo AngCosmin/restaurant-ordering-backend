@@ -55,7 +55,6 @@ class Order_Products(BaseModel):
     order = ForeignKeyField(Orders, backref='Order')
     product = ForeignKeyField(Products, backref='Order')
 
-
 @app.route('/')
 def hello_world():
     user = Users.get_or_none(Users.name == 'Ioana')
@@ -116,7 +115,7 @@ def buy():
 
 @app.route('/bill', methods=['GET'])
 def get_bill():
-    email = 'cosminzorr@gmail.com'  # request.form['email']
+    email = request.form['email']
     products = []
     user = Users.get_or_none(Users.email == email)
 
