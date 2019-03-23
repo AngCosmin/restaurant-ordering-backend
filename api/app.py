@@ -45,6 +45,11 @@ class Products(BaseModel):
     category = CharField()
 
 
+class Reviews(BaseModel):
+    product = ForeignKeyField(Products, backref='Table')
+    value = FloatField()
+
+
 class Orders(BaseModel):
     table = ForeignKeyField(Tables, backref='Order')
     user = ForeignKeyField(Users, backref='Order')
@@ -201,6 +206,35 @@ def add_product():
     return jsonify({
         'status': 'success',
         'message': 'You have successfully placed your product!'
+    })
+
+@app.route('/add_rating', methods=['POST'])
+def add_rating():
+    id_product = request.form['product_id']
+    rating = request.form['rating']
+
+    Reviews.create(product=id_product, value=rating)
+
+    return jsonify({
+        'status': 'success',
+        'message': 'You have successfully placed your review!'
+    })
+
+
+@app.route('/get_rating', methods=['GET'])
+def get_rating():
+    id_product = request.args['product_id']
+    sum = 0
+    nr = 0
+    for review in Reviews.select().where(Reviews.product == id_product):
+        sum += review.value
+        nr += 1
+
+    value = sum / nr
+
+    return jsonify({
+        'status': 'success',
+        'data': value
     })
 
 
