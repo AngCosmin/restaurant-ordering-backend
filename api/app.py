@@ -95,18 +95,18 @@ def get_menu():
 def buy():
     products = request.form['products']
     email = request.form['email']
-    id_table = request.form['id_table']
+    id_table = request.form['table_id']
 
     # products = '1, 3'
     # email = "ioanamoraru14@gmail.com"
     # id_table = "1"
 
     user = Users.get(Users.email == email)
-    order = Orders.create(id_table=id_table, id_user=user.id, status=1)
+    order = Orders.create(table=id_table, user=user.id, status=1)
     products = products.split(',')
 
     for product in products:
-        Order_Products.create(id_product=product, id_order=order.id)
+        Order_Products.create(product=product, order=order.id)
 
     return jsonify({
         'status': 'success',
