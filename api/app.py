@@ -140,6 +140,32 @@ def get_bill():
     })
 
 
+@app.route('/categories', methods=['GET'])
+def get_categories():
+    if 'id_table' in request.args:
+        id_table = request.args['id_table']
+        id_restaurant = Tables.get(Tables.id == id_table).restaurant
+    else:
+        id_restaurant = None
+
+    if id_restaurant is not None:
+        categories = []
+        for product in Products.select().where(Products.restaurant == id_restaurant):
+            categories.append(product.category)
+        categories = list(set(categories))
+    else:
+        categories = []
+        for restaurant in Restaurants.select():
+            for product in Products.select().where(Products.restaurant == restaurant.id):
+                categories.append(product.category)
+        categories = list(set(categories))
+
+    return jsonify({
+        'status': 'success',
+        'data': categories
+    })
+
+
 @app.route('/orders', methods=['GET'])
 def get_orders():
     # restaurat_id = request.args['restaurat_id']
