@@ -72,6 +72,20 @@ def hello_world():
     return user.email
 
 
+def get_rating(id_product):
+    sum = 0
+    nr = 0
+    for review in Reviews.select().where(Reviews.product == id_product):
+        sum += review.value
+        nr += 1
+
+    if nr == 0:
+        return ''
+
+    value = sum / nr
+    return value
+
+
 @app.route('/product', methods=['GET'])
 def get_menu():
     id_table = request.args['id_table']
@@ -99,7 +113,10 @@ def get_menu():
             dict['id'] = product.id
             dict['name'] = product.name
             dict['price'] = product.price
+            dict['picture'] = product.picture
             dict['category'] = category
+            rating = get_rating(product.id)
+            dict['rating'] = rating
             menu.append(dict)
 
     return jsonify({
@@ -226,6 +243,7 @@ def add_rating():
     })
 
 
+<<<<<<< HEAD
 @app.route('/get_rating', methods=['GET'])
 def get_rating():
     id_product = request.args['product_id']
@@ -257,6 +275,27 @@ def restaurant_login():
         })
     else:
         return '', 400
+
+@app.route('/restaurant/products', methods=['GET'])
+def restaurant_products():
+    id_restaurant = request.form['restaurant_id']
+
+    restaurant = Restaurants.get(Restaurants.id == id_restaurant)
+    products = []
+    for product in Products.select().where(Products.restaurant == restaurant.id):
+        dict = {}
+        dict['name'] = product.name
+        dict['rating'] = get_rating(product.id)
+        nr = 0
+        for review in Reviews.select().where(Reviews.product == product.id):
+            nr += 1
+        dict['persons'] = nr
+        products.append(dict)
+
+    return jsonify({
+        'status': 'success',
+        'data': products
+    })
 
 
 if __name__ == '__main__':
