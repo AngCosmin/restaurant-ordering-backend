@@ -253,11 +253,7 @@ def restaurant_login():
             'message': 'You have successfully log in!'
         })
     else:
-        return jsonify({
-            'success': False,
-            'message': 'Your password is incorrect!'
-        })
-
+        return '', 400
 
 
 if __name__ == '__main__':
