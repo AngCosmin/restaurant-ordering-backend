@@ -64,8 +64,12 @@ def hello_world():
 
 @app.route('/product', methods=['GET'])
 def get_menu():
-    id_table = int(request.args['id_table'])
-    print(id_table)
+    id_table = request.args['id_table']
+    if 'category' in request.args:
+        base_category = request.args['category']
+    else:
+        base_category = None
+
     query = Tables.update(isOcupied=True).where(Tables.id == id_table)
     query.execute()
 
@@ -74,18 +78,19 @@ def get_menu():
     for product in Products.select().where(Products.restaurant == id_restaurant):
         categories.append(product.category)
 
-    categories = list(set(categories))
-    menu = {}
+    if base_category is not None:
+        categories = [base_category]
+    else:
+        categories = list(set(categories))
+    menu = []
     for category in categories:
-        auxList = []
         for product in Products.select().where(Products.restaurant == id_restaurant, Products.category == category):
             dict = {}
             dict['id'] = product.id
             dict['name'] = product.name
             dict['price'] = product.price
-            auxList.append(dict)
-
-        menu[category] = auxList
+            dict['category'] = category
+            menu.append(dict)
 
     return jsonify({
         'status': 'success',
@@ -158,5 +163,7 @@ def get_orders():
     })
 
 
+
 if __name__ == '__main__':
     app.run()
+
