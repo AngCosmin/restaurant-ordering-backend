@@ -119,7 +119,7 @@ def get_menu():
             if rating == '-':
                 dict['rating'] = '-'
             else:
-                dict['rating'] = rating
+                dict['rating'] = str(rating)
             menu.append(dict)
 
     return jsonify({
