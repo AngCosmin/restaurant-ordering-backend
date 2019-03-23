@@ -66,7 +66,7 @@ def get_menu():
     id_table = request.args['id_table']
     if 'category' in request.args:
         base_category = request.args['category']
-    else
+    else:
         base_category = None
 
     query = Tables.update(isOcupied=True).where(Tables.id == id_table)
@@ -137,6 +137,17 @@ def get_bill():
         'data': products
     })
 
+@app.route('/orders', methods=['GET'])
+def get_orders():
+    #restaurat_id = request.form['restaurat_id']
+    restaurat_id = 1
+
+    orders = []
+    for order in Tables.select(Tables.id).where(Tables.restaurant==restaurat_id):
+        print(order.identify)
+    return ""
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
+
