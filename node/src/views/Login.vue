@@ -18,32 +18,42 @@
       <b-form-group id="exampleInputGroup2" label="Your password:" label-for="exampleInput2">
         <b-form-input
           id="exampleInput2"
-          type="text"
-          v-model="form.name"
+          type="password"
+          v-model="form.password"
           required
           placeholder="Enter password" />
       </b-form-group>
 
-      <b-button type="submit" variant="primary">Login</b-button>
+      <b-button type="submit" @click.prevent="onSubmit" variant="primary">Login</b-button>
     </b-form>
     </div>
 </template>
 
 <script>
+import axios from 'axios'
+import router from '@/router'
+
 export default {
     data() {
       return {
         form: {
           email: '',
-          name: '',
+          password: '',
         },
         show: true
       }
     },
     methods: {
       onSubmit(evt) {
-        evt.preventDefault()
-        alert(JSON.stringify(this.form))
+        let formData = {
+					email: this.form.email,
+					password: this.form.password,
+				}
+
+				this.$store.dispatch('auth/login', formData).then(() => {
+					this.$router.replace('/dashboard');
+				});
+
       }
     }
 }

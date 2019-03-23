@@ -1,9 +1,12 @@
 from peewee import CharField, IntegerField, FloatField, BooleanField, ForeignKeyField, Model, MySQLDatabase
 from flask import Flask
 from flask import request, jsonify
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
+
+cors = CORS(app)
 
 MYSQL_DB = 'app'
 MYSQL_HOST = 'localhost'
@@ -241,10 +244,10 @@ def get_rating():
 
 
 
-@app.route('/restaurant/login', methods=['GET'])
+@app.route('/restaurant/login', methods=['POST'])
 def restaurant_login():
-    email = request.form['email']
-    password = request.form['password']
+    email = request.json['email']
+    password = request.json['password']
 
     restaurant = Restaurants.get(Restaurants.email == email)
     if restaurant.password == password:

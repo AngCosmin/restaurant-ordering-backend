@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import { canMakeRequest } from '@/services/token.service'
 
 Vue.use(Router)
 
@@ -37,5 +38,28 @@ let routes = [
 const router = new Router({
     routes: routes,
 })
+
+router.beforeEach((to, from, next) => {
+    let email = localStorage.getItem('email')
+    let password = localStorage.getItem('password')
+    let requireAuth = to.matched.some(record => record.meta.requiresAuth)
+
+    if (to.path === '/login' && email) {
+        next('/products') 
+    }
+
+    if (!requireAuth) {
+        next()
+    }
+    else {
+        if (email) { 
+            next() 
+        }
+        else {
+            next('/login')                 
+        }
+    }
+});
+
 
 export default router
