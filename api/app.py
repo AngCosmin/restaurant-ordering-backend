@@ -27,6 +27,8 @@ class Users(BaseModel):
 
 class Restaurants(BaseModel):
     name = CharField()
+    email = CharField()
+    password = CharField()
 
 
 class Tables(BaseModel):
@@ -236,6 +238,26 @@ def get_rating():
         'status': 'success',
         'data': value
     })
+
+
+
+@app.route('/restaurant/login', methods=['GET'])
+def restaurant_login():
+    email = request.form['email']
+    password = request.form['password']
+
+    restaurant = Restaurants.get(Restaurants.email == email)
+    if restaurant.password == password:
+        return jsonify({
+            'success': True,
+            'message': 'You have successfully log in!'
+        })
+    else:
+        return jsonify({
+            'success': False,
+            'message': 'Your password is incorrect!'
+        })
+
 
 
 if __name__ == '__main__':
