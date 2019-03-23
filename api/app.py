@@ -30,14 +30,14 @@ class Restaurants(BaseModel):
 
 
 class Tables(BaseModel):
-    id_restaurant = ForeignKeyField(Restaurants, backref='Table')
+    restaurant = ForeignKeyField(Restaurants, backref='Table')
     isOcupied = BooleanField()
     status = IntegerField()
-    identify = IntegerField()
+    identify = CharField()
 
 
 class Products(BaseModel):
-    id_restaurant = IntegerField()
+    restaurant = ForeignKeyField(Restaurants, backref='Table')
     name = CharField()
     price = FloatField()
     ingredients = CharField()
@@ -46,15 +46,14 @@ class Products(BaseModel):
 
 
 class Orders(BaseModel):
-    id_table = IntegerField()
-    id_user = IntegerField()
+    table = ForeignKeyField(Tables, backref='Order')
+    user = ForeignKeyField(Users, backref='Order')
     status = IntegerField()
 
 
 class Order_Products(BaseModel):
-    id_order = IntegerField()
-    id_product = IntegerField()
-
+    order = ForeignKeyField(Orders, backref='Order')
+    product = ForeignKeyField(Products, backref='Order')
 
 
 @app.route('/')
@@ -64,10 +63,30 @@ def hello_world():
 
 
 @app.route('/product', methods=['GET'])
-def get_menue():
-    # id_restaurant = request.form['id_restaurant']
-    for product in Products.select().where(Products.id_restaurant == 1):
-        print(product.category)
+def get_menu():
+    id_table = 1  # request.form['id_restaurant']
+    query = Tables.update(isOcupied=True).where(Tables.id == id_table)
+    query.execute()
+
+    id_restaurant = Tables.get(Tables.id == id_table).restaurant
+    categories = []
+    for product in Products.select().where(Products.restaurant == id_restaurant):
+        categories.append(product.category)
+
+    categories = list(set(categories))
+    menu = {}
+    for category in categories:
+        auxList = []
+        for product in Products.select().where(
+                Products.restaurant == id_restaurant and Products.category == category):
+            dict = {}
+            dict['id'] = product.id
+            dict['name'] = product.name
+            dict['price'] = product.price
+            auxList.append(dict)
+
+        menu[category] = auxList
+
     return 'bjhcdsa'
 
 @app.route('/buy', methods=['POST'])
@@ -92,6 +111,15 @@ def buy():
         'message': 'You have successfully placed your order!'
     })
 
+
+@app.route('/bill', methods=['GET'])
+def get_bill():
+    email = 'cosminzorr@gmail.com'  # request.form['email']
+    products = []
+
+    user = Users.get_or_none(Users.email == email)
+
+    return user.name
 
 
 if __name__ == '__main__':
