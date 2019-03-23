@@ -52,7 +52,7 @@ class Products(BaseModel):
 
 class Reviews(BaseModel):
     product = ForeignKeyField(Products, backref='Table')
-    value = FloatField()
+    value = IntegerField()
 
 
 class Orders(BaseModel):
