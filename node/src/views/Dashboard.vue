@@ -1,61 +1,50 @@
 <template>
-    <div>
-        <b-container class="bv-example-row">
-        <b-row>
-            <b-col>
-                <div v-if="orders[0]">
-                    <b>Table {{ orders[0]['table_id'] }}</b>
-                    <br>
-                    <div v-for="item in orders[0]['products']" :key="item">{{ item }}</div>
-                    <button @click="setStatusComplete(orders[0]['table_id'])">Done</button>
+    <div style="margin-left: 25px; margin-right: 25px;">
+        <b-card-group deck style="margin-bottom: 25px">
+            <b-card v-if="orders[0]" :title="'Table ' + orders[0]['table_identify']">
+                <b-card-text v-for="item in orders[0]['products']" :key="item">{{ item }}</b-card-text>
+                <div @click="setStatusComplete(orders[0]['table_id'])">
+                    <b-button href="#" variant="primary" class="mt-2">Done</b-button>
                 </div>
-            </b-col>
-            <b-col>
-                <div v-if="orders[2]">
-                    <b>Table {{ orders[2]['table_id'] }}</b>
-                    <br>
-                    <div v-for="item in orders[2]['products']" :key="item">{{ item }}</div>
-                    <button @click="setStatusComplete(orders[2]['table_id'])">Done</button>
+            </b-card>
+
+            <b-card v-if="orders[1]" :title="'Table ' + orders[1]['table_identify']">
+                <b-card-text v-for="item in orders[1]['products']" :key="item">{{ item }}</b-card-text>
+                <div @click="setStatusComplete(orders[1]['table_id'])">
+                    <b-button href="#" variant="primary" class="mt-2">Done</b-button>
                 </div>
-            </b-col>
-            <b-col>
-                <div v-if="orders[4]">
-                    <b>Table {{ orders[4]['table_id'] }}</b>
-                    <br>
-                    <div v-for="item in orders[4]['products']" :key="item">{{ item }}</div>
-                    <button @click="setStatusComplete(orders[4]['table_id'])">Done</button>
+            </b-card>
+
+            <b-card v-if="orders[2]" :title="'Table ' + orders[2]['table_identify']">
+                <b-card-text v-for="item in orders[2]['products']" :key="item">{{ item }}</b-card-text>
+                <div @click="setStatusComplete(orders[2]['table_id'])">
+                    <b-button href="#" variant="primary" class="mt-2">Done</b-button>
                 </div>
-            </b-col>
-        </b-row>
-        </b-container>
-        <b-container class="bv-example-row">
-        <b-row>
-            <b-col>
-                <div v-if="orders[1]">
-                    <b class="title">Table {{ orders[1]['table_id'] }}</b>
-                    <br>
-                    <div v-for="item in orders[1]['products']" :key="item">{{ item }}</div>
-                    <button @click="setStatusComplete(orders[1]['table_id'])">Done</button>
+            </b-card>
+        </b-card-group>
+
+        <b-card-group deck>
+            <b-card v-if="orders[3]" :title="'Table ' + orders[3]['table_identify']">
+                <b-card-text v-for="item in orders[3]['products']" :key="item">{{ item }}</b-card-text>
+                <div @click="setStatusComplete(orders[3]['table_id'])">
+                <b-button href="#" variant="primary" class="mt-2">Done</b-button>
                 </div>
-            </b-col>
-            <b-col>
-                <div v-if="orders[3]">
-                    <b>Table {{ orders[3]['table_id'] }}</b>
-                    <br>
-                    <div v-for="item in orders[3]['products']" :key="item">{{ item }}</div>
-                    <button @click="setStatusComplete(orders[3]['table_id'])">Done</button>
+            </b-card>
+
+            <b-card v-if="orders[4]" :title="'Table ' + orders[4]['table_identify']">
+                <b-card-text v-for="item in orders[4]['products']" :key="item">{{ item }}</b-card-text>
+                <div @click="setStatusComplete(orders[4]['table_id'])">
+                <b-button href="#" variant="primary" class="mt-2">Done</b-button>
                 </div>
-            </b-col>
-            <b-col>
-                <div v-if="orders[5]">
-                    <b>Table {{ orders[5]['table_id'] }}</b>
-                    <br>
-                    <div v-for="item in orders[5]['products']" :key="item">{{ item }}</div>
-                    <button @click="setStatusComplete(orders[5]['table_id'])">Done</button>
+            </b-card>
+
+            <b-card v-if="orders[5]" :title="'Table ' + orders[5]['table_identify']">
+                <b-card-text v-for="item in orders[5]['products']" :key="item">{{ item }}</b-card-text>
+                <div @click="setStatusComplete(orders[5]['table_id'])">
+                    <b-button variant="primary" class="mt-2">Done</b-button>
                 </div>
-            </b-col>
-        </b-row>
-        </b-container>
+            </b-card>
+        </b-card-group>
     </div>
 </template>
 
@@ -76,10 +65,17 @@ export default {
     },
     created() {
         console.log(this.getEmail)
-        this.products()
+        this.getOrders()
+    },
+    mounted: function () {
+        this.$nextTick(function () {
+            window.setInterval(() => {
+                this.getOrders();
+            }, 5000);
+        })
     },
     methods: {
-        products() {
+        getOrders() {
             axios.get('/orders', {
                 params: {
                     email: this.getEmail,
@@ -98,7 +94,7 @@ export default {
                 status: 2
             }).then(response => {
                 console.log(response.data.data)
-                this.products()
+                this.getOrders()
             }).catch(error => {
                 console.error(error);
             })
@@ -111,4 +107,22 @@ export default {
     .title {
         font-size: 2em;
     }
-</style
+
+    .btn-primary {
+        background-color: #27ae60;
+        border: 1px solid #27ae60;
+    }
+
+    .btn-primary:hover {
+        background-color: #2ecc71;
+        border: 1px solid #2ecc71;
+    }
+
+    .card {
+        border: 1px solid #27ae60;
+    }
+
+    .card-text {
+        margin-bottom: 0;
+    }
+</style>

@@ -115,7 +115,7 @@ def get_menu():
             dict['price'] = product.price
             dict['picture'] = product.picture
             dict['category'] = category
-            rating = get_rating(product.id)
+            rating = round(get_rating(product.id), 1)
             if rating == '-':
                 dict['rating'] = '-'
             else:
@@ -137,6 +137,8 @@ def buy():
     user = Users.get(Users.email == email)
     order = Orders.create(table=id_table, user=user.id, status=1)
     products = products.split(',')
+
+    del products[len(products) - 1]
 
     for product in products:
         Order_Products.create(product=product, order=order.id)
