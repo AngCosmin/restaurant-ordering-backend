@@ -149,11 +149,12 @@ def buy():
 
 @app.route('/bill', methods=['GET'])
 def get_bill():
-    email = request.form['email']
+    id_order = request.form['order_id']
     products = []
-    user = Users.get_or_none(Users.email == email)
 
-    order = Orders.get_or_none(Orders.user == user.id and Orders.status == 2)
+    order = Orders.get_or_none(Orders.id == id_order and Orders.status == 2)
+    query = Orders.update(status=3).where(Orders.id == id_order)
+    query.execute()
 
     for order_product in Order_Products.select().where(Order_Products.order == order.id):
         produs = Products.get_or_none(Products.id == order_product.product)
