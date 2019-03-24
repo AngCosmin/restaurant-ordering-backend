@@ -134,10 +134,6 @@ def buy():
     email = request.form['email']
     id_table = request.form['table_id']
 
-    # products = '1, 3'
-    # email = "ioanamoraru14@gmail.com"
-    # id_table = "1"
-
     user = Users.get(Users.email == email)
     order = Orders.create(table=id_table, user=user.id, status=1)
     products = products.split(',')
@@ -219,11 +215,13 @@ def get_orders():
 
 @app.route('/add_product', methods=['POST'])
 def add_product():
-    id_restaurant = request.form['restaurant_id']
+    email = request.form['email']
     name = request.form['name']
     price = request.form['price']
     ingredients = request.form['ingredients']
     category = request.form['category']
+
+    id_restaurant = Restaurants.get(Restaurants.email == email)
 
     Products.create(restaurant=id_restaurant, name=name, price=price, ingredients=ingredients, category=category)
 
@@ -280,6 +278,21 @@ def restaurant_products():
         'status': 'success',
         'data': products
     })
+
+
+@app.route('/restaurant/update_order_status', methods=['POST'])
+def update_order():
+    id_order = request.form['order_id']
+    status = request.form['status']
+
+    query = Orders.update(status=status).where(Orders.id == id_order)
+    query.execute()
+
+    return jsonify({
+        'success': True,
+        'message': 'You successfully your order status!'
+    })
+
 
 
 if __name__ == '__main__':
