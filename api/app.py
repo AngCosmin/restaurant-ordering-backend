@@ -115,10 +115,11 @@ def get_menu():
             dict['price'] = product.price
             dict['picture'] = product.picture
             dict['category'] = category
-            rating = round(get_rating(product.id), 1)
+            rating = get_rating(product.id)
             if rating == '-':
                 dict['rating'] = '-'
             else:
+                rating = round(rating, 1)
                 dict['rating'] = str(rating)
             menu.append(dict)
 
@@ -334,7 +335,7 @@ def update_orders():
     id_table = request.json['table_id']
     status = request.json['status']
 
-    query = Orders.update(status=status).where(Orders.table == id_table)
+    query = Orders.update(status=status).where(Orders.table == id_table, Orders.status == 1)
     query.execute()
 
     return jsonify({
