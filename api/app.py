@@ -331,6 +331,19 @@ def update_orders():
         'message': 'You successfully your order status!'
     })
 
+@app.route('/restaurant/get_tables', methods=['GET'])
+def get_tables():
+    email = request.args['email']
+
+    restaurant = Restaurants.get(Restaurants.email == email)
+    tables = []
+    for table in Tables.select().where(Tables.restaurant == restaurant.id):
+        tables.append(table.identify)
+
+    return jsonify({
+        'success': True,
+        'data': tables
+    })
 
 
 if __name__ == '__main__':
