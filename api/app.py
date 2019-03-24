@@ -147,7 +147,7 @@ def buy():
     })
 
 
-@app.route('/bill', methods=['GET'])
+@app.route('/bill', methods=['POST'])
 def get_bill():
     id_order = request.form['order_id']
     rating = request.form['rating']
@@ -203,11 +203,11 @@ def get_orders():
     for rests in Restaurants.select().where(Restaurants.email == email):
         for tables in Tables.select().where(Tables.restaurant == rests.id):
             prod = []
-            for orders in Orders.select().where(Orders.table==tables.id, Orders.status == 1):
+            for orders in Orders.select().where(Orders.table == tables.id, Orders.status == 1):
 
-                for product_ids in Order_Products.select().where(Order_Products.order==orders.id):
+                for product_ids in Order_Products.select().where(Order_Products.order == orders.id):
 
-                    for products in Products.select().where(Products.id==product_ids.product):
+                    for products in Products.select().where(Products.id == product_ids.product):
                         prod.append(products.name)
             if prod != []:
                 ord.append({'table_id': tables.id, 'table_identify': tables.identify, 'products': prod})
@@ -216,6 +216,7 @@ def get_orders():
         'status': 'success',
         'data': ord
     })
+
 
 @app.route('/order/status', methods=['GET'])
 def get_order_status():
@@ -228,6 +229,7 @@ def get_order_status():
         'success': True
     })
 
+
 @app.route('/add_product', methods=['POST'])
 def add_product():
     email = request.json['email']
@@ -239,12 +241,14 @@ def add_product():
 
     id_restaurant = Restaurants.get(Restaurants.email == email)
 
-    Products.create(restaurant=id_restaurant, name=name, price=price, ingredients=ingredients, url=url, category=category)
+    Products.create(restaurant=id_restaurant, name=name, price=price, ingredients=ingredients, url=url,
+                    category=category)
 
     return jsonify({
         'status': 'success',
         'message': 'You have successfully placed your product!'
     })
+
 
 @app.route('/add_rating', methods=['POST'])
 def add_rating():
@@ -273,6 +277,7 @@ def restaurant_login():
     else:
         return '', 400
 
+
 @app.route('/restaurant/products', methods=['GET'])
 def restaurant_products():
     email = request.args['email']
@@ -293,6 +298,7 @@ def restaurant_products():
         'status': 'success',
         'data': products
     })
+
 
 @app.route('/restaurant/add_table', methods=['POST'])
 def restaurant_add_table():
@@ -320,6 +326,7 @@ def update_order():
         'message': 'You successfully update the order status!'
     })
 
+
 @app.route('/restaurant/update_orders_status', methods=['POST'])
 def update_orders():
     id_table = request.json['table_id']
@@ -332,6 +339,7 @@ def update_orders():
         'success': True,
         'message': 'You successfully your order status!'
     })
+
 
 @app.route('/restaurant/get_tables', methods=['GET'])
 def get_tables():
@@ -348,8 +356,26 @@ def get_tables():
     })
 
 
+@app.route('/history', methods=['GET'])
+def get_history():
+    email = request.args['email']
+
+    user = Users.get(Users.email == email)
+    data = []
+
+    for order in Orders.select().where(Orders.user == user.id, Orders.status == 3):
+        products = []
+        for order_product in Order_Products.select().where(Order_Products.order == order.id):
+            produs = Products.get_or_none(Products.id == order_product.product)
+            val = {'name': produs.name, 'price': produs.price}
+            products.append(val)
+        data.append(products)
+
+    return jsonify({
+        'status': 'success',
+        'data': data
+    })
 
 
 if __name__ == '__main__':
     app.run()
-
