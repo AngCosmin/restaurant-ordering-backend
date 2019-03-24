@@ -294,13 +294,38 @@ def restaurant_products():
         'data': products
     })
 
+@app.route('/restaurant/add_table', methods=['POST'])
+def restaurant_add_table():
+    email = request.json['email']
+    name = request.json['name']
+
+    restaurant = Restaurants.get_or_none(Restaurants.email == email)
+
+    Tables.create(restaurant=restaurant.id, isOcupied=False, status=0, identify=name)
+
+    return jsonify({
+        'status': 'success',
+    })
+
 
 @app.route('/restaurant/update_order_status', methods=['POST'])
 def update_order():
     id_order = request.form['order_id']
     status = request.form['status']
 
-    query = Orders.update(status=status).where(Orders.id == id_order)
+    Orders.update(status=status).where(Orders.id == id_order)
+
+    return jsonify({
+        'success': True,
+        'message': 'You successfully update the order status!'
+    })
+
+@app.route('/restaurant/update_orders_status', methods=['POST'])
+def update_orders():
+    id_table = request.json['table_id']
+    status = request.json['status']
+
+    query = Orders.update(status=status).where(Orders.table == id_table)
     query.execute()
 
     return jsonify({
