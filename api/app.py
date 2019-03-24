@@ -115,11 +115,14 @@ def get_menu():
             dict['price'] = product.price
             dict['picture'] = product.picture
             dict['category'] = category
-            rating = round(get_rating(product.id), 1)
-            if rating == '-':
-                dict['rating'] = '-'
+
+            if get_rating(product.id) != '-':
+                rating = str(round(get_rating(product.id), 1))
             else:
-                dict['rating'] = str(rating)
+                rating = '-'
+
+            dict['rating'] = rating
+
             menu.append(dict)
 
     return jsonify({
