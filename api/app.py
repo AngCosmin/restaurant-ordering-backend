@@ -115,7 +115,7 @@ def get_menu():
             dict['price'] = product.price
             dict['picture'] = product.picture
             dict['category'] = category
-            rating = get_rating(product.id)
+            rating = round(get_rating(product.id), 1)
             if rating == '-':
                 dict['rating'] = '-'
             else:
