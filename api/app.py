@@ -143,7 +143,7 @@ def buy():
 
     return jsonify({
         'status': 'success',
-        'message': 'You have successfully placed your order!'
+        'orderId': order.id
     })
 
 
