@@ -152,6 +152,7 @@ def buy():
 @app.route('/bill', methods=['GET'])
 def get_bill():
     id_order = request.form['order_id']
+    rating = request.form['rating']
     products = []
 
     order = Orders.get_or_none(Orders.id == id_order and Orders.status == 2)
@@ -160,6 +161,7 @@ def get_bill():
 
     for order_product in Order_Products.select().where(Order_Products.order == order.id):
         produs = Products.get_or_none(Products.id == order_product.product)
+        Reviews.create(product=produs.id, value=rating)
         val = {'name': produs.name, 'price': produs.price}
         products.append(val)
 
@@ -210,7 +212,7 @@ def get_orders():
                     for products in Products.select().where(Products.id==product_ids.product):
                         prod.append(products.name)
             if prod != []:
-                ord.append({'table_id': tables.identify, 'products': prod})
+                ord.append({'table_id': tables.id, 'table_identify': tables.identify, 'products': prod})
 
     return jsonify({
         'status': 'success',
@@ -332,6 +334,21 @@ def update_orders():
         'success': True,
         'message': 'You successfully your order status!'
     })
+
+@app.route('/restaurant/get_tables', methods=['GET'])
+def get_tables():
+    email = request.args['email']
+
+    restaurant = Restaurants.get(Restaurants.email == email)
+    tables = []
+    for table in Tables.select().where(Tables.restaurant == restaurant.id):
+        tables.append(table.identify)
+
+    return jsonify({
+        'success': True,
+        'data': tables
+    })
+
 
 
 
