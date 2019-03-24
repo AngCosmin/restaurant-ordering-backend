@@ -149,7 +149,7 @@ def buy():
     })
 
 
-@app.route('/bill', methods=['GET'])
+@app.route('/bill', methods=['POST'])
 def get_bill():
     id_order = request.form['order_id']
     rating = request.form['rating']
