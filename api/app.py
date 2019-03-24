@@ -366,13 +366,13 @@ def get_history():
     data = []
 
     for order in Orders.select().where(Orders.user == user.id, Orders.status == 3):
-        products = []
+        sum = 0
+        table = Tables.get(Tables.id == order.table)
+        restaurant = Restaurants.get(Restaurants.id == table.restaurant)
         for order_product in Order_Products.select().where(Order_Products.order == order.id):
             produs = Products.get_or_none(Products.id == order_product.product)
-            val = {'name': produs.name, 'price': produs.price}
-            products.append(val)
-        data.append(products)
-
+            sum += produs.price
+        data.append({'restaurant_name': restaurant.name, 'sum': sum})
     return jsonify({
         'status': 'success',
         'data': data
