@@ -1,21 +1,43 @@
 <template>
     <div class="container">
-        <h1 style="margin-bottom:70px"> These are your products </h1>
-        <b-table striped hover :items="items" />
+        <img alt="App logo" src="../assets/logo.png">
+        <b-table style="margin-bottom:100px" striped hover :items="items" />
     </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+import axios from 'axios'
+
 export default {
+    computed: {
+        ...mapGetters('auth', {
+            getEmail: 'getEmail',
+        }),
+    },
     data() {
         return {
-            items: [
-            { name: 'Pizza Margherita', rating: 4.5, reviews: 45},
-            { name: 'Pizza Margherita', rating: 4.5, reviews: 45},
-            { name: 'Pizza Margherita', rating: 4.5, reviews: 45},
-            { name: 'Pizza Margherita', rating: 4.5, reviews: 45}
-            ]
+            items: []
+        }
+    },
+    created() {
+        console.log(this.getEmail)
+        this.products()
+    },
+    methods: {
+        products() {
+            axios.get('/restaurant/products', {
+                params: {
+                    email: this.getEmail,
+                }
+            }).then(response => {
+                console.log(response.data.data)
+                this.items = response.data.data
+            }).catch(error => {
+                console.error(error);
+            })
         }
     }
+    
 }
 </script>

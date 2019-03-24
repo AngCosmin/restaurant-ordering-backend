@@ -1,7 +1,8 @@
 <template>
     <div class="container">
+        <img alt="App logo" src="../assets/logo.png">
         <h1 style="margin-bottom:70px"> Add products to your menu </h1>
-        <b-form @submit="onSubmit" v-if="show">
+        <b-form style="margin-bottom:70px" @submit="onSubmit" v-if="show">
         <b-form-group
             id="FoodInputGroup"
             label="Food name:"
@@ -37,12 +38,12 @@
         id="pictureInput"
         type="url"
         v-model="form.url"
-        optional
+        required
         placeholder="Enter picture url" />
         </b-form-group>
 
         <b-form-group id="exampleInputGroup3" label="Category:" label-for="exampleInput3">
-        <b-form-select id="exampleInput3" :options="categories" required v-model="form.categories" />
+        <b-form-select id="exampleInput3" :options="categories" required v-model="form.category" />
         </b-form-group>
 
         <b-button type="submit" variant="primary">Submit</b-button>
@@ -51,24 +52,61 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+import axios from 'axios'
+import router from '@/router'
+
 export default {
+    computed: {
+        ...mapGetters('auth', {
+            getEmail: 'getEmail',
+        }),
+    },
     data() {
       return {
         form: {
           name: '',
           ingredients: '',
           price: 0,
-          url: '',
+		  url: '',
+		  category: '',
         },
-        categories: [{ text: 'Select One', value: null }, 'Carrots', 'Beans', 'Tomatoes', 'Corn'],
+        categories: [],
         show: true
       }
     },
+    created() {
+      this.getCategories()
+    },
     methods: {
-      onSubmit(evt) {
-        evt.preventDefault()
-        alert(JSON.stringify(this.form))
-      }
-    }
+      onSubmit() {
+		axios.post('/add_product', {
+			email: this.getEmail,
+			name: this.form.name,
+			ingredients: this.form.ingredients,
+			price: this.form.price,
+			url: this.form.url,
+			category: this.form.category
+		}).then(response => {
+			this.form.name = ''
+			this.form.ingredients = ''
+			this.form.price = 0
+			this.form.url = ''
+			this.form.category = ''
+		}).catch(error => {
+			console.error(error);
+		})
+      },
+      getCategories() {
+            axios.get('/categories', {
+            }).then(response => {
+                console.log(response.data.data)
+                this.categories = response.data.data
+
+            }).catch(error => {
+                console.error(error);
+            })
+		}
+	}
 }
 </script>
