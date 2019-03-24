@@ -149,11 +149,12 @@ def buy():
 
 @app.route('/bill', methods=['GET'])
 def get_bill():
-    email = request.form['email']
+    id_order = request.form['order_id']
     products = []
-    user = Users.get_or_none(Users.email == email)
 
-    order = Orders.get_or_none(Orders.user == user.id and Orders.status == 2)
+    order = Orders.get_or_none(Orders.id == id_order and Orders.status == 2)
+    query = Orders.update(status=3).where(Orders.id == id_order)
+    query.execute()
 
     for order_product in Order_Products.select().where(Order_Products.order == order.id):
         produs = Products.get_or_none(Products.id == order_product.product)
@@ -291,18 +292,30 @@ def restaurant_products():
         'data': products
     })
 
+@app.route('/restaurant/add_table', methods=['POST'])
+def restaurant_add_table():
+    email = request.form['email']
+    name = request.form['name']
+
+    restaurant = Restaurants.get_or_none(Restaurants.email == email)
+
+    Tables.create(restaurant=restaurant.id, isOcupied=False, status=0, identify=name)
+
+    return jsonify({
+        'status': 'success',
+    })
+
 
 @app.route('/restaurant/update_order_status', methods=['POST'])
 def update_order():
     id_order = request.form['order_id']
     status = request.form['status']
 
-    query = Orders.update(status=status).where(Orders.id == id_order)
-    query.execute()
+    Orders.update(status=status).where(Orders.id == id_order)
 
     return jsonify({
         'success': True,
-        'message': 'You successfully your order status!'
+        'message': 'You successfully update the order status!'
     })
 
 @app.route('/restaurant/update_orders_status', methods=['POST'])
