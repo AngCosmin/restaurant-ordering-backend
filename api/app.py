@@ -261,7 +261,7 @@ def restaurant_login():
 
 @app.route('/restaurant/products', methods=['GET'])
 def restaurant_products():
-    email = request.form['email']
+    email = request.args['email']
 
     restaurant = Restaurants.get(Restaurants.email == email)
     products = []
