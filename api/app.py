@@ -115,7 +115,7 @@ def get_menu():
             dict['price'] = product.price
             dict['picture'] = product.picture
             dict['category'] = category
-            rating = get_rating(product.id)
+            rating = round(get_rating(product.id), 1)
             if rating == '-':
                 dict['rating'] = '-'
             else:
@@ -149,8 +149,8 @@ def buy():
 
 @app.route('/bill', methods=['GET'])
 def get_bill():
-    id_order = request.form['order_id']
-    rating = request.form['rating']
+    id_order = 3#request.form['order_id']
+    rating = 3#request.form['rating']
     products = []
 
     order = Orders.get_or_none(Orders.id == id_order and Orders.status == 2)
