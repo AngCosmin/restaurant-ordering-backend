@@ -216,16 +216,16 @@ def get_orders():
 
 @app.route('/add_product', methods=['POST'])
 def add_product():
-    email = request.form['email']
-    name = request.form['name']
-    price = request.form['price']
-    ingredients = request.form['ingredients']
-    category = request.form['category']
+    email = request.json['email']
+    name = request.json['name']
+    price = request.json['price']
+    ingredients = request.json['ingredients']
+    url = request.json['url']
+    category = request.json['category']
 
     id_restaurant = Restaurants.get(Restaurants.email == email)
 
-    Products.create(restaurant=id_restaurant, name=name, price=price, ingredients=ingredients, category=category)
-
+    Products.create(restaurant=id_restaurant, name=name, price=price, ingredients=ingredients, url=url, category=category)
 
     return jsonify({
         'status': 'success',
