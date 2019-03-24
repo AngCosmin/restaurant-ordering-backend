@@ -33,6 +33,12 @@ let routes = [
         meta: { requiresAuth: true },
         name: 'dashboard',
     },
+    {
+        path: '/tables',
+        component: loadView('Tables'),
+        meta: { requiresAuth: true },
+        name: 'tables',
+    },
 ]
 
 const router = new Router({

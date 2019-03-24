@@ -305,6 +305,19 @@ def update_order():
         'message': 'You successfully your order status!'
     })
 
+@app.route('/restaurant/update_orders_status', methods=['POST'])
+def update_orders():
+    id_table = request.json['table_id']
+    status = request.json['status']
+
+    query = Orders.update(status=status).where(Orders.table == id_table)
+    query.execute()
+
+    return jsonify({
+        'success': True,
+        'message': 'You successfully your order status!'
+    })
+
 
 
 if __name__ == '__main__':

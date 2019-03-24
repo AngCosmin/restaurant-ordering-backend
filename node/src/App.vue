@@ -5,6 +5,7 @@
         <b-nav-item active><router-link v-if="isAuth" :to="{ name: 'home' }">Home</router-link></b-nav-item>
         <b-nav-item><router-link v-if="isAuth" :to="{ name: 'products' }">Products</router-link></b-nav-item>
         <b-nav-item><router-link v-if="isAuth" :to="{ name: 'dashboard' }">Dashboard</router-link></b-nav-item>
+        <b-nav-item><router-link v-if="isAuth" :to="{ name: 'tables' }">Tables</router-link></b-nav-item>
         <b-nav-item><b-button v-if="isAuth" type="submit" @click.prevent="onLogout" variant="outline-primary">Logout</b-button></b-nav-item>
         <!-- <b-nav-item><router-link v-if="!isAuth" :to="{ name: 'login' }">Login</router-link></b-nav-item> -->
       </b-nav>
