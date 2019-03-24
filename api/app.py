@@ -210,7 +210,7 @@ def get_orders():
                     for products in Products.select().where(Products.id==product_ids.product):
                         prod.append(products.name)
             if prod != []:
-                ord.append({'table_id': tables.id, 'products': prod})
+                ord.append({'table_id': tables.identify, 'products': prod})
 
     return jsonify({
         'status': 'success',
