@@ -12,7 +12,7 @@
             type="text"
             v-model="form.name"
             required
-            placeholder="Enter food name" />
+            placeholder="Enter table name" />
         </b-form-group>
 
         <b-form-group
@@ -54,7 +54,7 @@ export default {
     },
     methods: {
       onSubmit() {
-		axios.post('/add_product', {
+		axios.post('/restaurant/add_table', {
 			email: this.getEmail,
 			name: this.form.name,
 		}).then(response => {

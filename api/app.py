@@ -294,8 +294,8 @@ def restaurant_products():
 
 @app.route('/restaurant/add_table', methods=['POST'])
 def restaurant_add_table():
-    email = request.form['email']
-    name = request.form['name']
+    email = request.json['email']
+    name = request.json['name']
 
     restaurant = Restaurants.get_or_none(Restaurants.email == email)
 
