@@ -198,19 +198,20 @@ def get_categories():
 
 @app.route('/orders', methods=['GET'])
 def get_orders():
-    restaurat_id = request.args['restaurat_id']
+    email = request.args['email']
 
     ord = []
-    for tables in Tables.select().where(Tables.restaurant == restaurat_id):
-        prod = []
-        for orders in Orders.select().where(Orders.table==tables.id, Orders.status == 1):
+    for rests in Restaurants.select().where(Restaurants.email == email):
+        for tables in Tables.select().where(Tables.restaurant == rests.id):
+            prod = []
+            for orders in Orders.select().where(Orders.table==tables.id, Orders.status == 1):
 
-            for product_ids in Order_Products.select().where(Order_Products.order==orders.id):
+                for product_ids in Order_Products.select().where(Order_Products.order==orders.id):
 
-                for products in Products.select().where(Products.id==product_ids.product):
-                    prod.append(products.name)
-        if prod != []:
-            ord.append({'table_id': tables.id, 'products': prod})
+                    for products in Products.select().where(Products.id==product_ids.product):
+                        prod.append(products.name)
+            if prod != []:
+                ord.append({'table_id': tables.id, 'products': prod})
 
     return jsonify({
         'status': 'success',
