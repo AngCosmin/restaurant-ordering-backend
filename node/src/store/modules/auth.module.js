@@ -22,12 +22,14 @@ const getters = {
 	isAuthenticated(state) {
 		return state.email !== null
 	},
+	getEmail(state) {
+		return state.email
+	}
 }
 
 
 const actions = {
 	login: ({ commit }, authData) => {
-		console.log("1")
 		axios.post('/restaurant/login', {
 			email: authData.email,
 			password: authData.password,

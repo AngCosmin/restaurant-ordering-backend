@@ -216,18 +216,29 @@ def get_orders():
         'data': ord
     })
 
+@app.route('/order/status', methods=['GET'])
+def get_order_status():
+    id_order = request.args['order_id']
+
+    status = Orders.get(Orders.id == id_order).status
+
+    return jsonify({
+        'status': status,
+        'success': True
+    })
+
 @app.route('/add_product', methods=['POST'])
 def add_product():
-    email = request.form['email']
-    name = request.form['name']
-    price = request.form['price']
-    ingredients = request.form['ingredients']
-    category = request.form['category']
+    email = request.json['email']
+    name = request.json['name']
+    price = request.json['price']
+    ingredients = request.json['ingredients']
+    url = request.json['url']
+    category = request.json['category']
 
     id_restaurant = Restaurants.get(Restaurants.email == email)
 
-    Products.create(restaurant=id_restaurant, name=name, price=price, ingredients=ingredients, category=category)
-
+    Products.create(restaurant=id_restaurant, name=name, price=price, ingredients=ingredients, url=url, category=category)
 
     return jsonify({
         'status': 'success',
@@ -263,7 +274,7 @@ def restaurant_login():
 
 @app.route('/restaurant/products', methods=['GET'])
 def restaurant_products():
-    email = request.form['email']
+    email = request.args['email']
 
     restaurant = Restaurants.get(Restaurants.email == email)
     products = []
