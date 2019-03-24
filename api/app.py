@@ -138,6 +138,8 @@ def buy():
     order = Orders.create(table=id_table, user=user.id, status=1)
     products = products.split(',')
 
+    del products[len(products) - 1]
+
     for product in products:
         Order_Products.create(product=product, order=order.id)
 
