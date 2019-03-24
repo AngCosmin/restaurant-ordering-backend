@@ -214,6 +214,17 @@ def get_orders():
         'data': ord
     })
 
+@app.route('/order/status', methods=['GET'])
+def get_order_status():
+    id_order = request.args['order_id']
+
+    status = Orders.get(Orders.id == id_order).status
+
+    return jsonify({
+        'status': status,
+        'success': True
+    })
+
 @app.route('/add_product', methods=['POST'])
 def add_product():
     email = request.json['email']
