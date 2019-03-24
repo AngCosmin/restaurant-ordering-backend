@@ -149,8 +149,8 @@ def buy():
 
 @app.route('/bill', methods=['GET'])
 def get_bill():
-    id_order = 3#request.form['order_id']
-    rating = 3#request.form['rating']
+    id_order = request.form['order_id']
+    rating = request.form['rating']
     products = []
 
     order = Orders.get_or_none(Orders.id == id_order and Orders.status == 2)
