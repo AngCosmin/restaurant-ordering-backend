@@ -1,5 +1,10 @@
 <template>
     <div style="margin-left: 25px; margin-right: 25px;">
+        <div class="text-center">
+            <h3 v-if="getEmail === 'maisondescrepes@gmail.com'">Maison des Crepes</h3>
+            <h3 v-else-if="getEmail === 'pizzahut@gmail.com'">Pizza Hut</h3>
+        </div>
+
         <b-card-group deck style="margin-bottom: 25px">
             <b-card v-if="orders[0]" :title="'Table ' + orders[0]['table_identify']">
                 <b-card-text v-for="item in orders[0]['products']" :key="item">{{ item }}</b-card-text>
